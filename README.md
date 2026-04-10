@@ -1,7 +1,7 @@
 # Network Scanner
 
-Un tool de scanare a rețelei scris în Python, inspirat de nmap.
-Oferă informații despre IP-uri și domenii: porturi deschise, locație geografică, date WHOIS și înregistrări DNS.
+A network scanning tool written in Python, inspired by nmap.
+Provides information about IPs and domains: open ports, geographic location, WHOIS data and DNS records.
 
 ## Funcționalități
 
