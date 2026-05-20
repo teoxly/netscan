@@ -18,11 +18,11 @@ from dataclasses import dataclass
 @dataclass
 class ParsedTarget:
     """Rezultatul parsării: tot ce știm despre țintă înainte de scanare."""
-    raw_input: str          # ce a tastat utilizatorul
-    ip: str                 # IP-ul rezolvat
-    hostname: str | None    # domeniu (dacă a dat domeniu) sau None
-    is_private: bool        # IP privat (192.168.x.x, 10.x.x.x etc.)
-    ip_version: int         # 4 sau 6
+    raw_input: str
+    ip: str
+    hostname: str | None
+    is_private: bool
+    ip_version: int
 
 
 def resolve_hostname(hostname: str) -> str:
@@ -44,7 +44,6 @@ def parse_single_target(raw: str) -> ParsedTarget:
     """
     raw = raw.strip()
 
-    # Încearcă să parseze direct ca IP
     try:
         addr = ipaddress.ip_address(raw)
         return ParsedTarget(
@@ -55,9 +54,8 @@ def parse_single_target(raw: str) -> ParsedTarget:
             ip_version=addr.version,
         )
     except ValueError:
-        pass  # nu e IP, probabil e domeniu
+        pass
 
-    # Tratează ca domeniu și rezolvă DNS
     ip_str = resolve_hostname(raw)
     addr = ipaddress.ip_address(ip_str)
 
@@ -103,20 +101,13 @@ def parse_target(raw: str) -> list[ParsedTarget]:
     """
     Punct de intrare principal.
     Detectează automat tipul inputului și returnează lista de targete.
-
-    Exemple:
-        parse_target("8.8.8.8")           → [ParsedTarget(ip="8.8.8.8", ...)]
-        parse_target("google.com")         → [ParsedTarget(ip="142.250.x.x", hostname="google.com", ...)]
-        parse_target("192.168.1.0/24")    → [ParsedTarget(...), ParsedTarget(...), ...]
     """
     raw = raw.strip()
 
     if not raw:
         raise ValueError("Input gol — specifică un IP, domeniu sau range CIDR.")
 
-    # Detectează CIDR după slash
     if "/" in raw:
         return parse_cidr(raw)
 
-    # Altfel: IP sau domeniu
     return [parse_single_target(raw)]

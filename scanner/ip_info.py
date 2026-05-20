@@ -2,57 +2,48 @@
 ip_info.py
 ----------
 Responsabilitate: trimite un IP către ip-api.com și returnează
-informații despre locație, provider, etc.
+informații despre locație, provider etc.
 """
 
+import ipaddress
 import requests
 from dataclasses import dataclass
 
 
 @dataclass
 class IPInfo:
-    """Cutia cu informații despre un IP — același concept ca ParsedTarget."""
+    """Cutia cu informații despre un IP."""
     ip: str
     country: str
     city: str
     region: str
-    isp: str        # Internet Service Provider — compania care deține IP-ul
-    org: str        # organizația (uneori diferită de ISP)
-    lat: float      # latitudine
-    lon: float      # longitudine
+    isp: str
+    org: str
+    lat: float
+    lon: float
     timezone: str
 
 
 def get_ip_info(ip: str) -> IPInfo | None:
     """
     Întreabă ip-api.com despre un IP și returnează un obiect IPInfo.
-    Returnează None dacă ceva merge prost (IP privat, fără internet, etc.)
+    Returnează None dacă ceva merge prost sau IP-ul e privat.
     """
-
-    # IP-urile private (192.168.x.x, 10.x.x.x) nu au informații publice
-    # ip-api.com nu le poate localiza, deci nu are sens să întrebăm
-    if ip.startswith("192.168.") or ip.startswith("10.") or ip.startswith("127."):
+    try:
+        addr = ipaddress.ip_address(ip)
+        if addr.is_private or addr.is_loopback:
+            return None
+    except ValueError:
         return None
 
     try:
-        # Construim URL-ul — practic adresa la care "batem"
         url = f"http://ip-api.com/json/{ip}"
-
-        # requests.get() face un HTTP request și așteaptă răspunsul
-        # timeout=5 înseamnă: dacă nu răspunde în 5 secunde, renunțăm
         response = requests.get(url, timeout=5)
-
-        # Transformăm răspunsul din text JSON într-un dicționar Python
-        # Adică din '{"country": "Romania"}' → {"country": "Romania"}
         data = response.json()
 
-        # ip-api.com ne spune dacă cererea a reușit prin câmpul "status"
         if data.get("status") != "success":
             return None
 
-        # Construim și returnăm obiectul IPInfo cu datele primite
-        # data.get("country", "?") înseamnă: ia valoarea "country" din dicționar,
-        # iar dacă nu există, pune "?" în loc să dea eroare
         return IPInfo(
             ip=ip,
             country=data.get("country", "?"),

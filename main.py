@@ -8,13 +8,14 @@ import sys
 from scanner.input_parser import parse_target
 from scanner.port_scanner import scan_ports, get_default_ports
 from scanner.ip_info import get_ip_info
+from scanner.whois_dns import get_full_info
 
 
 def print_target_info(target):
-    print(f"\n  IP        : {target.ip}")
-    print(f"  Hostname  : {target.hostname or '—'}")
+    print(f"\n  IP           : {target.ip}")
+    print(f"  Hostname     : {target.hostname or '—'}")
     print(f"  Network type : {'Private (LAN)' if target.is_private else 'Public (Internet)'}")
-    print(f"  Version  : IPv{target.ip_version}")
+    print(f"  Version      : IPv{target.ip_version}")
 
 
 def print_ip_info(info):
@@ -23,12 +24,31 @@ def print_ip_info(info):
         return
 
     print(f"\n  Country      : {info.country}")
-    print(f"  Region   : {info.region}")
-    print(f"  City      : {info.city}")
-    print(f"  ISP       : {info.isp}")
-    print(f"  Org       : {info.org}")
-    print(f"  Timezone  : {info.timezone}")
-    print(f"  Coordinates: {info.lat}, {info.lon}")
+    print(f"  Region       : {info.region}")
+    print(f"  City         : {info.city}")
+    print(f"  ISP          : {info.isp}")
+    print(f"  Org          : {info.org}")
+    print(f"  Timezone     : {info.timezone}")
+    print(f"  Coordinates  : {info.lat}, {info.lon}")
+
+
+def print_whois_dns_info(domain):
+    whois_info, dns_info = get_full_info(domain)
+
+    if whois_info:
+        print("\n  --- WHOIS ---")
+        print(f"  Registrar     : {whois_info.registrar}")
+        print(f"  Creation date : {whois_info.creation_date}")
+        print(f"  Expiration    : {whois_info.expiration_date}")
+        print(f"  Name servers  : {', '.join(whois_info.name_servers) if whois_info.name_servers else '—'}")
+    else:
+        print("\n  [!] WHOIS information unavailable")
+
+    print("\n  --- DNS ---")
+    print(f"  A records   : {', '.join(dns_info.a_records) if dns_info.a_records else '—'}")
+    print(f"  MX records  : {', '.join(dns_info.mx_records) if dns_info.mx_records else '—'}")
+    print(f"  NS records  : {', '.join(dns_info.ns_records) if dns_info.ns_records else '—'}")
+    print(f"  TXT records : {', '.join(dns_info.txt_records) if dns_info.txt_records else '—'}")
 
 
 def print_port_results(open_ports):
@@ -48,7 +68,7 @@ def print_port_results(open_ports):
 
 def main():
     if len(sys.argv) < 2:
-        print("Using: python main.py <ip|domeniu|CIDR>")
+        print("Usage: python main.py <ip|domeniu|CIDR>")
         sys.exit(1)
 
     raw_input = sys.argv[1]
@@ -63,10 +83,14 @@ def main():
     ports_to_scan = get_default_ports()
 
     for target in targets:
-        print(f"\n{'='*50}")
+        print(f"\n{'=' * 50}")
 
         print("\n--- General information ---")
         print_target_info(target)
+
+        if target.hostname:
+            print("\n--- WHOIS / DNS ---")
+            print_whois_dns_info(target.hostname)
 
         print("\n--- Location and provider ---")
         ip_info = get_ip_info(target.ip)
