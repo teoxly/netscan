@@ -1,0 +1,6 @@
+2026-05-20 13:44:19,821 | INFO | app.services.scan_service | Starting scan 4a9dbddd-dfd0-4bf3-a053-e3c3a0c8a0db for 8.8.8.8
+2026-05-20 13:44:21,979 | INFO | app.services.scan_service | Scan 4a9dbddd-dfd0-4bf3-a053-e3c3a0c8a0db finished successfully
+2026-05-20 13:45:08,657 | INFO | app.services.scan_service | Starting scan 378e52b4-9d2e-4a8c-aa41-c927d690e5ca for 10.10.0.188
+2026-05-20 13:45:08,662 | INFO | app.services.scan_service | Scan 378e52b4-9d2e-4a8c-aa41-c927d690e5ca finished successfully
+2026-05-20 13:45:26,306 | INFO | app.services.scan_service | Starting scan c6550a20-8a7c-46ff-a9b2-19db0a9f6f0b for 10.10.0.1
+2026-05-20 13:45:26,310 | INFO | app.services.scan_service | Scan c6550a20-8a7c-46ff-a9b2-19db0a9f6f0b finished successfully
