@@ -64,7 +64,3 @@ The project is split into modules under `scanner/` — each one handles a differ
 ## Dependencies
 
 socket, concurrent.futures, ipaddress (standard library), plus requests, python-whois, and dnspython (in requirements.txt).
-
-## Legal
-
-Only use this on networks and systems you have permission to scan.
