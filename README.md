@@ -1,91 +1,70 @@
-# Network Scanner
+# netscan
 
-A network scanning tool written in Python, inspired by nmap.
-Provides information about IPs and domains: open ports, geographic location, WHOIS data and DNS records.
+A Python network reconnaissance tool I built inspired by nmap. Give it an IP, domain, or CIDR range and it returns open ports, geolocation, WHOIS data, and DNS records.
 
-## Funcționalități
+## Features
 
-- **Port Scanner** — scanează porturile TCP comune în paralel (threading) și detectează serviciile care rulează
-- **IP Info** — locație geografică, ISP și organizație via ip-api.com
-- **WHOIS** — registrar, data înregistrării și expirării domeniului
-- **DNS** — înregistrări A, MX, NS, TXT
-- **Input flexibil** — acceptă IP, domeniu sau range CIDR (ex: 192.168.1.0/24)
+- Port scanning — checks common TCP ports in parallel using threading and identifies running services
+- Geolocation — country, city, ISP via ip-api.com
+- WHOIS lookups — registrar, registration/expiration dates
+- DNS resolution — A, MX, NS, TXT records
+- Works with single IPs, domains, or CIDR ranges
 
-## Instalare
+## Setup
 
-```bash
-git clone https://github.com/username/network-scanner.git
-cd network-scanner
+```
+git clone https://github.com/username/netscan.git
+cd netscan
 pip install -r requirements.txt
 ```
 
-## Utilizare
+## How to use
 
-```bash
-# Scanează un IP
-python main.py 8.8.8.8
-
-# Scanează un domeniu (include WHOIS și DNS)
-python main.py google.com
-
-# Scanează un range de rețea
-python main.py 192.168.1.0/24
+```
+python main.py 8.8.8.8           # single IP
+python main.py google.com        # domain (includes WHOIS + DNS)
+python main.py 192.168.1.0/24    # network range
 ```
 
-## Exemplu output
+## Example output
 
 ```
 [*] Target: google.com
-
 ==================================================
 
---- Informatii generale ---
+--- General ---
   IP        : 142.250.74.46
   Hostname  : google.com
-  Tip retea : Public (Internet)
-  Versiune  : IPv4
+  Network   : Public (Internet)
+  Version   : IPv4
 
---- Locatie si provider ---
-  Tara      : United States
-  Oras      : Mountain View
+--- Location & provider ---
+  Country   : United States
+  City      : Mountain View
   ISP       : Google LLC
 
---- WHOIS si DNS ---
+--- WHOIS & DNS ---
   Registrar   : MarkMonitor Inc.
-  Inregistrat : 1997-09-15
-  Expira      : 2028-09-14
+  Registered  : 1997-09-15
+  Expires     : 2028-09-14
   A (IP)      : 142.250.74.46
   MX          : 10 smtp.google.com.
 
---- Porturi ---
-  PORT     SERVICIU        BANNER
+--- Open ports ---
+  PORT     SERVICE         BANNER
   ------------------------------------------------------------
   80       HTTP            —
   443      HTTPS           —
 ```
 
-## Structura proiectului
+## Project structure
 
-```
-network-scanner/
-├── scanner/
-│   ├── input_parser.py   # validare și parsare input (IP, domeniu, CIDR)
-│   ├── port_scanner.py   # scanare TCP cu threading
-│   ├── ip_info.py        # locație geografică via ip-api.com
-│   └── whois_dns.py      # date WHOIS și înregistrări DNS
-├── main.py               # punctul de intrare, orchestrează modulele
-└── requirements.txt
-```
+The project is split into modules under `scanner/` — each one handles a different type of lookup (ports, geolocation, WHOIS, DNS). `main.py` ties them together and runs everything based on the input type.
 
-## Tehnologii folosite
+## Dependencies
 
-- `socket` — conexiuni TCP pentru port scanning
-- `concurrent.futures` — threading pentru scanare paralelă
-- `ipaddress` — validare și parsare IP/CIDR
-- `requests` — HTTP requests către ip-api.com
-- `python-whois` — interogare WHOIS
-- `dnspython` — interogare DNS
+socket, concurrent.futures, ipaddress (standard library), plus requests, python-whois, and dnspython (in requirements.txt).
 
-## Note legale
+## Legal
 
-Folosește acest tool doar pe rețele și sisteme pentru care ai permisiune explicită. Scanarea neautorizată poate fi ilegală.
+Only use this on networks and systems you have permission to scan.
